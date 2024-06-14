@@ -207,6 +207,7 @@ Use \code{set_stime_layer_mapping} to set these values.}
 \item \href{#method-metaRangeSimulation-begin}{\code{metaRangeSimulation$begin()}}
 \item \href{#method-metaRangeSimulation-print}{\code{metaRangeSimulation$print()}}
 \item \href{#method-metaRangeSimulation-summary}{\code{metaRangeSimulation$summary()}}
+\item \href{#method-metaRangeSimulation-clone}{\code{metaRangeSimulation$clone()}}
 }
 }
 \if{html}{\out{<hr>}}
@@ -660,5 +661,22 @@ sim$summary()
 
 }
 
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-metaRangeSimulation-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-metaRangeSimulation-clone}{}}}
+\subsection{Method \code{clone()}}{
+The objects of this class are cloneable with this method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{metaRangeSimulation$clone(deep = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{deep}}{Whether to make a deep clone.}
+}
+\if{html}{\out{</div>}}
+}
 }
 }

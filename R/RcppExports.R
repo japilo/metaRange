@@ -61,6 +61,126 @@ calculate_suitability <- function(vmax, vopt, vmin, venv) {
     .Call('_metaRange_calculate_suitability', PACKAGE = 'metaRange', vmax, vopt, vmin, venv)
 }
 
+#' Helper Function for Breeding Season SIRI Simulation
+#'
+#' This function is an internal one for my Frankenmodel (epizootic + metaRange)
+#' which performs daily simulations of disease dynamics and demography for all
+#' populations at one breeding season timestep.
+#'
+#' @param Sj_abundance A matrix of susceptible juvenile abundances.
+#' @param Sa_abundance A matrix of susceptible adult abundances.
+#' @param I1j_abundance A matrix of juveniles infected for the first time.
+#' @param I1a_abundance A matrix of adults infected for the first time.
+#' @param Rj_abundance A matrix of recovered juveniles.
+#' @param Ra_abundance A matrix of recovered adults.
+#' @param I2j_abundance A matrix of juveniles infected for the second time.
+#' @param I2a_abundance A matrix of adults infected for the second time.
+#' @param fecundity Seasonal fecundity of adults.
+#' @param transmission_Sj_summer Transmission rate from susceptible juveniles to first-time infected juveniles in summer.
+#' A single numeric value.
+#' @param transmission_Sa_summer Transmission rate from susceptible adults to first-time infected adults in summer.
+#' A single numeric value.
+#' @param transmission_Rj_summer Transmission rate from recovered juveniles to second-time infected juveniles in summer.
+#' A single numeric value.
+#' @param transmission_Ra_summer Transmission rate from recovered infected adults to second-time infected adults in summer.
+#' A single numeric value.
+#' @param recovery_I1j_summer Recovery rate from first-time infected juveniles to recovered juveniles in summer.
+#' A single numeric value.
+#' @param recovery_I1a_summer Recovery rate from first-time infected adults to recovered adults in summer.
+#' A single numeric value.
+#' @param recovery_I2j_summer Recovery rate from second-time infected juveniles to recovered juveniles in summer.
+#' A single numeric value.
+#' @param recovery_I2a_summer Recovery rate from second-time infected adults to recovered adults in summer.
+#' A single numeric value.
+#' @param mortality_Sj_summer Mortality rate of susceptible juveniles in summer.
+#' A single numeric value.
+#' @param mortality_Sa_summer Mortality rate of susceptible adults in summer.
+#' A single numeric value.
+#' @param mortality_I1j_summer Mortality rate of first-time infected juveniles in summer.
+#' A single numeric value.
+#' @param mortality_I1a_summer Mortality rate of first-time infected adults in summer.
+#' A single numeric value.
+#' @param mortality_Rj_summer Mortality rate of recovered juveniles in summer.
+#' A single numeric value.
+#' @param mortality_Ra_summer Mortality rate of recovered adults in summer.
+#' A single numeric value.
+#' @param mortality_I2j_summer Mortality rate of second-time infected juveniles in summer.
+#' A single numeric value.
+#' @param mortality_I2a_summer Mortality rate of second-time infected adults in summer.
+#' A single numeric value.
+#' @param season_length A vector of season lengths in days.
+#' @param abundance_threshold A vector of quasi-extinction thresholds below which a
+#' population becomes extinct.
+#' @param density_max The maximum population density for a population.
+#' @param habitat_suitability A numeric vector that indicates the habitat suitabilities
+#' for the populations.
+#' @return A matrix of 8 rows by N populations, where N is the length of the
+#' input population matrices.
+#' @export
+daily_siri_summer <- function(Sj_abundance, Sa_abundance, I1j_abundance, I1a_abundance, Rj_abundance, Ra_abundance, I2j_abundance, I2a_abundance, fecundity, transmission_Sj_summer, transmission_Sa_summer, transmission_Rj_summer, transmission_Ra_summer, recovery_I1j_summer, recovery_I1a_summer, recovery_I2j_summer, recovery_I2a_summer, mortality_Sj_summer, mortality_Sa_summer, mortality_I1j_summer, mortality_I1a_summer, mortality_Rj_summer, mortality_Ra_summer, mortality_I2j_summer, mortality_I2a_summer, season_length, abundance_threshold, density_max, habitat_suitability) {
+    .Call('_metaRange_daily_siri_summer', PACKAGE = 'metaRange', Sj_abundance, Sa_abundance, I1j_abundance, I1a_abundance, Rj_abundance, Ra_abundance, I2j_abundance, I2a_abundance, fecundity, transmission_Sj_summer, transmission_Sa_summer, transmission_Rj_summer, transmission_Ra_summer, recovery_I1j_summer, recovery_I1a_summer, recovery_I2j_summer, recovery_I2a_summer, mortality_Sj_summer, mortality_Sa_summer, mortality_I1j_summer, mortality_I1a_summer, mortality_Rj_summer, mortality_Ra_summer, mortality_I2j_summer, mortality_I2a_summer, season_length, abundance_threshold, density_max, habitat_suitability)
+}
+
+#' Helper Function for Non-Breeding Season SIRI Simulation
+#'
+#' This function is an internal one for my Frankenmodel (epizootic + metaRange)
+#' which performs daily simulations of disease dynamics and demography for all
+#' populations at one non-breeding season timestep.
+#' @name daily_siri_winter
+#'
+#' @param Sj_abundance A matrix of susceptible juvenile abundances.
+#' @param Sa_abundance A matrix of susceptible adult abundances.
+#' @param I1j_abundance A matrix of juveniles infected for the first time.
+#' @param I1a_abundance A matrix of adults infected for the first time.
+#' @param Rj_abundance A matrix of recovered juveniles.
+#' @param Ra_abundance A matrix of recovered adults.
+#' @param I2j_abundance A matrix of juveniles infected for the second time.
+#' @param I2a_abundance A matrix of adults infected for the second time.
+#' @param transmission_Sj_winter Transmission rate from susceptible juveniles to first-time infected juveniles in winter.
+#' A single numeric value.
+#' @param transmission_Sa_winter Transmission rate from susceptible adults to first-time infected adults in winter.
+#' A single numeric value.
+#' @param transmission_Rj_winter Transmission rate from recovered juveniles to second-time infected juveniles in winter.
+#' A single numeric value.
+#' @param transmission_Ra_winter Transmission rate from recovered infected adults to second-time infected adults in winter.
+#' A single numeric value.
+#' @param recovery_I1j_winter Recovery rate from first-time infected juveniles to recovered juveniles in winter.
+#' A single numeric value.
+#' @param recovery_I1a_winter Recovery rate from first-time infected adults to recovered adults in winter.
+#' A single numeric value.
+#' @param recovery_I2j_winter Recovery rate from second-time infected juveniles to recovered juveniles in winter.
+#' A single numeric value.
+#' @param recovery_I2a_winter Recovery rate from second-time infected adults to recovered adults in winter.
+#' A single numeric value.
+#' @param mortality_Sj_winter Mortality rate of susceptible juveniles in winter.
+#' A single numeric value.
+#' @param mortality_Sa_winter Mortality rate of susceptible adults in winter.
+#' A single numeric value.
+#' @param mortality_I1j_winter Mortality rate of first-time infected juveniles in winter.
+#' A single numeric value.
+#' @param mortality_I1a_winter Mortality rate of first-time infected adults in winter.
+#' A single numeric value.
+#' @param mortality_Rj_winter Mortality rate of recovered juveniles in winter.
+#' A single numeric value.
+#' @param mortality_Ra_winter Mortality rate of recovered adults in winter.
+#' A single numeric value.
+#' @param mortality_I2j_winter Mortality rate of second-time infected juveniles in winter.
+#' A single numeric value.
+#' @param mortality_I2a_winter Mortality rate of second-time infected adults in winter.
+#' A single numeric value.
+#' @param season_length A vector of season lengths in days.
+#' @param abundance_threshold A vector of quasi-extinction thresholds below which a
+#' population becomes extinct.
+#' @param density_max The maximum population density for a population.
+#' @param habitat_suitability A numeric vector that indicates the habitat suitabilities
+#' for the populations.
+#' @return A matrix of 8 rows by N populations, where N is the length of the
+#' input population matrices.
+#' @export
+daily_siri_winter <- function(Sj_abundance, Sa_abundance, I1j_abundance, I1a_abundance, Rj_abundance, Ra_abundance, I2j_abundance, I2a_abundance, transmission_Sj_winter, transmission_Sa_winter, transmission_Rj_winter, transmission_Ra_winter, recovery_I1j_winter, recovery_I1a_winter, recovery_I2j_winter, recovery_I2a_winter, mortality_Sj_winter, mortality_Sa_winter, mortality_I1j_winter, mortality_I1a_winter, mortality_Rj_winter, mortality_Ra_winter, mortality_I2j_winter, mortality_I2a_winter, season_length, abundance_threshold, density_max, habitat_suitability) {
+    .Call('_metaRange_daily_siri_winter', PACKAGE = 'metaRange', Sj_abundance, Sa_abundance, I1j_abundance, I1a_abundance, Rj_abundance, Ra_abundance, I2j_abundance, I2a_abundance, transmission_Sj_winter, transmission_Sa_winter, transmission_Rj_winter, transmission_Ra_winter, recovery_I1j_winter, recovery_I1a_winter, recovery_I2j_winter, recovery_I2a_winter, mortality_Sj_winter, mortality_Sa_winter, mortality_I1j_winter, mortality_I1a_winter, mortality_Rj_winter, mortality_Ra_winter, mortality_I2j_winter, mortality_I2a_winter, season_length, abundance_threshold, density_max, habitat_suitability)
+}
+
 #' Unweighted and fixed sized dispersal
 #'
 #' Dispersal function that uses a fixed sized kernel that isn't influenced by

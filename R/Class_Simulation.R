@@ -24,7 +24,7 @@
 #' @return A `<metaRangeSimulation>` object.
 #' @export
 metaRangeSimulation <- R6::R6Class("metaRangeSimulation",
-    cloneable = FALSE,
+    cloneable = TRUE,
     portable = TRUE,
     lock_objects = FALSE,
     public = list(

@@ -25,6 +25,83 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// daily_siri_summer
+arma::mat daily_siri_summer(arma::mat Sj_abundance, arma::mat Sa_abundance, arma::mat I1j_abundance, arma::mat I1a_abundance, arma::mat Rj_abundance, arma::mat Ra_abundance, arma::mat I2j_abundance, arma::mat I2a_abundance, double fecundity, double transmission_Sj_summer, double transmission_Sa_summer, double transmission_Rj_summer, double transmission_Ra_summer, double recovery_I1j_summer, double recovery_I1a_summer, double recovery_I2j_summer, double recovery_I2a_summer, double mortality_Sj_summer, double mortality_Sa_summer, double mortality_I1j_summer, double mortality_I1a_summer, double mortality_Rj_summer, double mortality_Ra_summer, double mortality_I2j_summer, double mortality_I2a_summer, arma::vec season_length, double abundance_threshold, double density_max, arma::vec habitat_suitability);
+RcppExport SEXP _metaRange_daily_siri_summer(SEXP Sj_abundanceSEXP, SEXP Sa_abundanceSEXP, SEXP I1j_abundanceSEXP, SEXP I1a_abundanceSEXP, SEXP Rj_abundanceSEXP, SEXP Ra_abundanceSEXP, SEXP I2j_abundanceSEXP, SEXP I2a_abundanceSEXP, SEXP fecunditySEXP, SEXP transmission_Sj_summerSEXP, SEXP transmission_Sa_summerSEXP, SEXP transmission_Rj_summerSEXP, SEXP transmission_Ra_summerSEXP, SEXP recovery_I1j_summerSEXP, SEXP recovery_I1a_summerSEXP, SEXP recovery_I2j_summerSEXP, SEXP recovery_I2a_summerSEXP, SEXP mortality_Sj_summerSEXP, SEXP mortality_Sa_summerSEXP, SEXP mortality_I1j_summerSEXP, SEXP mortality_I1a_summerSEXP, SEXP mortality_Rj_summerSEXP, SEXP mortality_Ra_summerSEXP, SEXP mortality_I2j_summerSEXP, SEXP mortality_I2a_summerSEXP, SEXP season_lengthSEXP, SEXP abundance_thresholdSEXP, SEXP density_maxSEXP, SEXP habitat_suitabilitySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type Sj_abundance(Sj_abundanceSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type Sa_abundance(Sa_abundanceSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type I1j_abundance(I1j_abundanceSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type I1a_abundance(I1a_abundanceSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type Rj_abundance(Rj_abundanceSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type Ra_abundance(Ra_abundanceSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type I2j_abundance(I2j_abundanceSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type I2a_abundance(I2a_abundanceSEXP);
+    Rcpp::traits::input_parameter< double >::type fecundity(fecunditySEXP);
+    Rcpp::traits::input_parameter< double >::type transmission_Sj_summer(transmission_Sj_summerSEXP);
+    Rcpp::traits::input_parameter< double >::type transmission_Sa_summer(transmission_Sa_summerSEXP);
+    Rcpp::traits::input_parameter< double >::type transmission_Rj_summer(transmission_Rj_summerSEXP);
+    Rcpp::traits::input_parameter< double >::type transmission_Ra_summer(transmission_Ra_summerSEXP);
+    Rcpp::traits::input_parameter< double >::type recovery_I1j_summer(recovery_I1j_summerSEXP);
+    Rcpp::traits::input_parameter< double >::type recovery_I1a_summer(recovery_I1a_summerSEXP);
+    Rcpp::traits::input_parameter< double >::type recovery_I2j_summer(recovery_I2j_summerSEXP);
+    Rcpp::traits::input_parameter< double >::type recovery_I2a_summer(recovery_I2a_summerSEXP);
+    Rcpp::traits::input_parameter< double >::type mortality_Sj_summer(mortality_Sj_summerSEXP);
+    Rcpp::traits::input_parameter< double >::type mortality_Sa_summer(mortality_Sa_summerSEXP);
+    Rcpp::traits::input_parameter< double >::type mortality_I1j_summer(mortality_I1j_summerSEXP);
+    Rcpp::traits::input_parameter< double >::type mortality_I1a_summer(mortality_I1a_summerSEXP);
+    Rcpp::traits::input_parameter< double >::type mortality_Rj_summer(mortality_Rj_summerSEXP);
+    Rcpp::traits::input_parameter< double >::type mortality_Ra_summer(mortality_Ra_summerSEXP);
+    Rcpp::traits::input_parameter< double >::type mortality_I2j_summer(mortality_I2j_summerSEXP);
+    Rcpp::traits::input_parameter< double >::type mortality_I2a_summer(mortality_I2a_summerSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type season_length(season_lengthSEXP);
+    Rcpp::traits::input_parameter< double >::type abundance_threshold(abundance_thresholdSEXP);
+    Rcpp::traits::input_parameter< double >::type density_max(density_maxSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type habitat_suitability(habitat_suitabilitySEXP);
+    rcpp_result_gen = Rcpp::wrap(daily_siri_summer(Sj_abundance, Sa_abundance, I1j_abundance, I1a_abundance, Rj_abundance, Ra_abundance, I2j_abundance, I2a_abundance, fecundity, transmission_Sj_summer, transmission_Sa_summer, transmission_Rj_summer, transmission_Ra_summer, recovery_I1j_summer, recovery_I1a_summer, recovery_I2j_summer, recovery_I2a_summer, mortality_Sj_summer, mortality_Sa_summer, mortality_I1j_summer, mortality_I1a_summer, mortality_Rj_summer, mortality_Ra_summer, mortality_I2j_summer, mortality_I2a_summer, season_length, abundance_threshold, density_max, habitat_suitability));
+    return rcpp_result_gen;
+END_RCPP
+}
+// daily_siri_winter
+arma::mat daily_siri_winter(arma::mat Sj_abundance, arma::mat Sa_abundance, arma::mat I1j_abundance, arma::mat I1a_abundance, arma::mat Rj_abundance, arma::mat Ra_abundance, arma::mat I2j_abundance, arma::mat I2a_abundance, double transmission_Sj_winter, double transmission_Sa_winter, double transmission_Rj_winter, double transmission_Ra_winter, double recovery_I1j_winter, double recovery_I1a_winter, double recovery_I2j_winter, double recovery_I2a_winter, double mortality_Sj_winter, double mortality_Sa_winter, double mortality_I1j_winter, double mortality_I1a_winter, double mortality_Rj_winter, double mortality_Ra_winter, double mortality_I2j_winter, double mortality_I2a_winter, arma::vec season_length, double abundance_threshold, double density_max, arma::vec habitat_suitability);
+RcppExport SEXP _metaRange_daily_siri_winter(SEXP Sj_abundanceSEXP, SEXP Sa_abundanceSEXP, SEXP I1j_abundanceSEXP, SEXP I1a_abundanceSEXP, SEXP Rj_abundanceSEXP, SEXP Ra_abundanceSEXP, SEXP I2j_abundanceSEXP, SEXP I2a_abundanceSEXP, SEXP transmission_Sj_winterSEXP, SEXP transmission_Sa_winterSEXP, SEXP transmission_Rj_winterSEXP, SEXP transmission_Ra_winterSEXP, SEXP recovery_I1j_winterSEXP, SEXP recovery_I1a_winterSEXP, SEXP recovery_I2j_winterSEXP, SEXP recovery_I2a_winterSEXP, SEXP mortality_Sj_winterSEXP, SEXP mortality_Sa_winterSEXP, SEXP mortality_I1j_winterSEXP, SEXP mortality_I1a_winterSEXP, SEXP mortality_Rj_winterSEXP, SEXP mortality_Ra_winterSEXP, SEXP mortality_I2j_winterSEXP, SEXP mortality_I2a_winterSEXP, SEXP season_lengthSEXP, SEXP abundance_thresholdSEXP, SEXP density_maxSEXP, SEXP habitat_suitabilitySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type Sj_abundance(Sj_abundanceSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type Sa_abundance(Sa_abundanceSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type I1j_abundance(I1j_abundanceSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type I1a_abundance(I1a_abundanceSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type Rj_abundance(Rj_abundanceSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type Ra_abundance(Ra_abundanceSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type I2j_abundance(I2j_abundanceSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type I2a_abundance(I2a_abundanceSEXP);
+    Rcpp::traits::input_parameter< double >::type transmission_Sj_winter(transmission_Sj_winterSEXP);
+    Rcpp::traits::input_parameter< double >::type transmission_Sa_winter(transmission_Sa_winterSEXP);
+    Rcpp::traits::input_parameter< double >::type transmission_Rj_winter(transmission_Rj_winterSEXP);
+    Rcpp::traits::input_parameter< double >::type transmission_Ra_winter(transmission_Ra_winterSEXP);
+    Rcpp::traits::input_parameter< double >::type recovery_I1j_winter(recovery_I1j_winterSEXP);
+    Rcpp::traits::input_parameter< double >::type recovery_I1a_winter(recovery_I1a_winterSEXP);
+    Rcpp::traits::input_parameter< double >::type recovery_I2j_winter(recovery_I2j_winterSEXP);
+    Rcpp::traits::input_parameter< double >::type recovery_I2a_winter(recovery_I2a_winterSEXP);
+    Rcpp::traits::input_parameter< double >::type mortality_Sj_winter(mortality_Sj_winterSEXP);
+    Rcpp::traits::input_parameter< double >::type mortality_Sa_winter(mortality_Sa_winterSEXP);
+    Rcpp::traits::input_parameter< double >::type mortality_I1j_winter(mortality_I1j_winterSEXP);
+    Rcpp::traits::input_parameter< double >::type mortality_I1a_winter(mortality_I1a_winterSEXP);
+    Rcpp::traits::input_parameter< double >::type mortality_Rj_winter(mortality_Rj_winterSEXP);
+    Rcpp::traits::input_parameter< double >::type mortality_Ra_winter(mortality_Ra_winterSEXP);
+    Rcpp::traits::input_parameter< double >::type mortality_I2j_winter(mortality_I2j_winterSEXP);
+    Rcpp::traits::input_parameter< double >::type mortality_I2a_winter(mortality_I2a_winterSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type season_length(season_lengthSEXP);
+    Rcpp::traits::input_parameter< double >::type abundance_threshold(abundance_thresholdSEXP);
+    Rcpp::traits::input_parameter< double >::type density_max(density_maxSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type habitat_suitability(habitat_suitabilitySEXP);
+    rcpp_result_gen = Rcpp::wrap(daily_siri_winter(Sj_abundance, Sa_abundance, I1j_abundance, I1a_abundance, Rj_abundance, Ra_abundance, I2j_abundance, I2a_abundance, transmission_Sj_winter, transmission_Sa_winter, transmission_Rj_winter, transmission_Ra_winter, recovery_I1j_winter, recovery_I1a_winter, recovery_I2j_winter, recovery_I2a_winter, mortality_Sj_winter, mortality_Sa_winter, mortality_I1j_winter, mortality_I1a_winter, mortality_Rj_winter, mortality_Ra_winter, mortality_I2j_winter, mortality_I2a_winter, season_length, abundance_threshold, density_max, habitat_suitability));
+    return rcpp_result_gen;
+END_RCPP
+}
 // dispersal_fixed_unweighted
 arma::mat dispersal_fixed_unweighted(arma::mat abundance, arma::mat dispersal_kernel);
 RcppExport SEXP _metaRange_dispersal_fixed_unweighted(SEXP abundanceSEXP, SEXP dispersal_kernelSEXP) {
@@ -97,6 +174,8 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_metaRange_calculate_suitability", (DL_FUNC) &_metaRange_calculate_suitability, 4},
+    {"_metaRange_daily_siri_summer", (DL_FUNC) &_metaRange_daily_siri_summer, 29},
+    {"_metaRange_daily_siri_winter", (DL_FUNC) &_metaRange_daily_siri_winter, 28},
     {"_metaRange_dispersal_fixed_unweighted", (DL_FUNC) &_metaRange_dispersal_fixed_unweighted, 2},
     {"_metaRange_dispersal_fixed_weighted", (DL_FUNC) &_metaRange_dispersal_fixed_weighted, 3},
     {"_metaRange_metabolic_scaling", (DL_FUNC) &_metaRange_metabolic_scaling, 6},
