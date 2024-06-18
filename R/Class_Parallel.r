@@ -141,8 +141,8 @@ metaRangeParallel <- R6::R6Class("metaRangeParallel",
       already_assigned <- intersect(names(sample_list), names(simulation[[self$species_name]]$traits))
 
       if (length(already_assigned)) {
-        cli_abort("Error: tried to assign traits that are already present in the simulation template.",
-                  "i" = "These traits are {already_assigned}.")
+        cli_abort(c("Error: tried to assign traits that are already present in the simulation template.",
+                  "i" = "These traits are {already_assigned}."))
       }
 
       rlang::inject(simulation$add_traits(
@@ -160,7 +160,9 @@ metaRangeParallel <- R6::R6Class("metaRangeParallel",
               inputs <- intersect(generator$inputs, generator$get_attribute_aliases())
 
               if (any(names(simulation[[self$species_name]]$traits) %in% inputs)) {
-                generator$set_attributes(params = simulation[[self$species_name]]$traits[inputs])
+                generator$set_attributes(params = setNames(lapply(inputs, 
+                                                  function(input) simulation[[self$species_name]]$traits[[input]]), 
+                                           inputs))
               } else if (any(names(self$sample_data) %in% inputs)) {
                 generator$set_attributes(params = sample_list[inputs])
               }
@@ -185,8 +187,14 @@ metaRangeParallel <- R6::R6Class("metaRangeParallel",
               input_values <- setNames(vector("list", length(inputs)), inputs)
 
               matching_attributes <- intersect(names(input_values), names(simulation[[self$species_name]]$traits))
-              input_values[matching_attributes] <- simulation[[self$species_name]]$traits[[matching_attributes]]
-              
+              if (length(matching_attributes) == 0) {
+                cli_abort(c("The input values for generator {generator$description}
+                           could not be found in the species traits.",
+                           "x" = "Input values {input_values} are missing."))
+              } else {
+                input_values[matching_attributes] <- lapply(matching_attributes, 
+                                                            function(input) simulation[[self$species_name]]$traits[[input]])
+              }
 
               matching_samples <- intersect(names(input_values), names(sample_list))
               input_values[matching_samples] <- sample_list[matching_samples]
@@ -241,7 +249,7 @@ metaRangeParallel <- R6::R6Class("metaRangeParallel",
       }
 
       # Check the completeness/consistency of the first sample only
-      model <- self$simulation_template$clone()
+      model <- self$simulation_template$new_clone()
       self$set_model_sample(model, 1)
       model <- NULL
 
@@ -251,7 +259,7 @@ metaRangeParallel <- R6::R6Class("metaRangeParallel",
                           .errorhandling = c("pass")) %dopar% {
 
         # Clone the model
-        model <- self$simulation_template$clone()
+        model <- self$simulation_template$new_clone()
 
         # Run the simulator
         simulator_run_status <- list(successful = TRUE, message = "Simulation %s ran successfully")
@@ -301,7 +309,7 @@ metaRangeParallel <- R6::R6Class("metaRangeParallel",
     .generative_names = NULL,
     .generators = NULL,
     .parallel_threads = 1,
-    .results_dir = NULL,
+    .results_dir = tempdir(),
     .sample_data = NULL,
     .seed = sample.int(1000000, 1),
     .simulation_template = NULL,

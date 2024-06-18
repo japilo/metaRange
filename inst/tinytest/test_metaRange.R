@@ -265,4 +265,48 @@ testfun_deueue <- function(n, simlength, sim_env) {
 }
 expect_true(testfun_deueue(n = n, simlength = simlength, sim_env = sim_env),
     info = "testing queue & dequeue")
+
+## Test new_clone method 
+sim <- create_simulation(sim_env)
+sim$add_species("test_species")
+copy <- sim$new_clone()
+
+expect_true("test_species" %in% copy$species_names())
+expect_inherits(copy, "metaRangeSimulation")
+
+sim$add_globals(a = 1, b = 2) 
+copy <- sim$new_clone() 
+
+expect_equal(copy$globals$a, 1) 
+expect_equal(copy$globals$b, 2)
+
+sim$add_process(
+    process_name = "global_process",
+    process_fun = function() {
+        message("process_2")
+    },
+    execution_priority = 2
+)
+copy <- sim$new_clone()
+
+expect_true("global_process" %in% names(copy$processes))
+
+sim$add_process("test_species", 
+                "species_process_1", 
+                function() {
+                    message("process_1")
+                }, 
+                1) 
+copy <- sim$new_clone() 
+
+expect_true("species_process_1" %in% names(copy$test_species$processes))
+
+sim$add_traits("test_species", population_level = TRUE, a = 1) 
+sim$add_traits("test_species", population_level = FALSE, b = 2, c = "c") 
+copy <- sim$new_clone() 
+
+expect_equal(copy$test_species$traits$a, matrix(1, nrow = 5, ncol = 5)) 
+expect_equal(copy$test_species$traits$b, 2) 
+expect_equal(copy$test_species$traits$c, "c")
+
 rm(testfun, testfun_deueue, sim_env, n, simlength, temperature, precipitation, habitat)

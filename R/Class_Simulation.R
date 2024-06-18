@@ -33,6 +33,9 @@ metaRangeSimulation <- R6::R6Class("metaRangeSimulation",
         #' @field ID `<string>` simulation identification.
         ID = NULL,
 
+        #' @field object_generator Class object generator used to create new clones, particularly for user inheritance.
+        object_generator = NULL,
+
         # ---------- // globals -------------------
         #' @field globals `<environment>` a place to store global variables.
         #' I.e. variables and data that are no specific to one species.
@@ -88,10 +91,18 @@ metaRangeSimulation <- R6::R6Class("metaRangeSimulation",
         #' sim_env <- terra::sds(terra::rast(vals = 1, nrow = 2, ncol = 2))
         #' sim <- metaRangeSimulation$new(source_environment = sim_env)
         #' sim
-        initialize = function(source_environment, ID = NULL, seed = NULL) {
+        initialize = function(source_environment, ID = NULL, seed = NULL,
+                              object_generator = NULL) {
             if (!missing(source_environment)) {
                 private$set_sim_environment(source_environment)
             }
+
+            if (!is.null(object_generator)) {
+                self$object_generator <- object_generator
+            } else {
+                self$object_generator <- eval(parse(text = class(self)[1]))
+            }
+
             if (!is.null(ID)) {
                 checkmate::assert_string(ID, min.chars = 1, max.chars = 64, null.ok = FALSE)
                 self$ID <- ID
@@ -116,6 +127,53 @@ metaRangeSimulation <- R6::R6Class("metaRangeSimulation",
             if (getOption("metaRange.verbose", default = FALSE)) {
                 message("created simulation: ", self$ID)
             }
+        },
+
+        #' @description
+        #' Creates a new (re-initialized) object of the current (inherited) object class with optionally passed parameters.
+        #' @param ... Parameters passed via the inherited class constructor (defined in initialize and run via new).
+        #' @return New object of the current (inherited) class.
+        new_clone = function(...) {
+            copy <- self$object_generator$new(object_generator = self$object_generator,
+                                              source_environment = self$environment$sourceSDS,
+                                              seed = self$seed)
+
+            if (length(self$globals)) {
+                copy$globals <- self$globals
+            }
+
+            # Add global processes if they exist
+            if (!is.null(self$processes)) {
+                for (p in self$processes) {
+                    copy$add_process(
+                        process_name = p$get_name(),
+                        process_fun = p$fun,
+                        execution_priority = p$get_priority()
+                    )
+                }
+            }
+
+            if (length(self$species_names())) {
+                copy$add_species(self$species_names())
+
+                lapply(self$species_names(), function(name) {
+                    if (length(self[[name]]$processes)) {
+                        for (p in self[[name]]$processes) {
+                            copy$add_process(
+                                species = name,
+                                process_name = p$get_name(),
+                                process_fun = p$fun,
+                                execution_priority = p$get_priority()
+                            )
+                        }
+                    }
+                    if (length(self[[name]]$traits)) {
+                        copy[[name]]$traits <- self[[name]]$traits
+                    }
+                })
+            }
+
+            return(copy)
         },
 
 

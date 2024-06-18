@@ -76,7 +76,7 @@ sim_manager$sample_data <- data.frame(
 sim_manager$generators <- generator_a
 
 # Set model sample
-model_clone <- sim_manager$simulation_template$clone()
+model_clone <- sim_manager$simulation_template$new_clone()
 expect_silent(sim_manager$set_model_sample(model_clone, 1))
 expect_equal(model_clone$test_species$traits$abundance, matrix(1000, ncol = n, nrow = n))
 
