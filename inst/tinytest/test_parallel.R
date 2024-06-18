@@ -79,6 +79,7 @@ sim_manager$generators <- generator_a
 model_clone <- sim_manager$simulation_template$new_clone()
 expect_silent(sim_manager$set_model_sample(model_clone, 1))
 expect_equal(model_clone$test_species$traits$abundance, matrix(1000, ncol = n, nrow = n))
+expect_equal(model_clone$globals$results_dir, file.path(sim_manager$results_dir, "simulation1"))
 
 # Run
 sim_manager$results_dir <- tempdir()

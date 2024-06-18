@@ -129,9 +129,7 @@ metaRangeParallel <- R6::R6Class("metaRangeParallel",
     #' @export
     set_model_sample = function(simulation, sample_index) {
 
-      simulation$add_traits(
-        species = self$species_name,
-        population_level = FALSE,
+      simulation$add_globals(
         results_dir = file.path(self$results_dir, paste0("simulation", sample_index))
       )
 
@@ -221,6 +219,8 @@ metaRangeParallel <- R6::R6Class("metaRangeParallel",
           }
         }
       }
+
+      return(simulation)
     },
 
 
@@ -260,41 +260,63 @@ metaRangeParallel <- R6::R6Class("metaRangeParallel",
 
         # Clone the model
         model <- self$simulation_template$new_clone()
+        self$set_model_sample(model, i)
 
         # Run the simulator
-        simulator_run_status <- list(successful = TRUE, message = "Simulation %s ran successfully")
-        self$set_model_sample(model, i)
-        tryCatch(
+        run_status <- NULL
+        run_status <- tryCatch(
           {
-            model$begin()
+            suppressWarnings(
+              withCallingHandlers(
+                {
+                  model$begin()
+                },
+                warning = function(w) {
+                  self$warning_messages <- c(
+                    self$warning_messages,
+                    gsub("simpleWarning", "Warning",
+                      gsub("\n", "", as.character(w), fixed = TRUE),
+                      fixed = TRUE
+                    )
+                  )
+                }
+              )
+            )
+            if (!is.null(self$attached$warnings)) {
+              list(
+                successful = TRUE, message = "Model %s simulation ran successfully with warnings",
+                warnings = self$warning_messages
+              )
+            } else {
+              list(successful = TRUE, message = "Model %s simulation ran successfully")
+            }
           },
           error = function(e) {
-            simulator_run_status$successful <- FALSE
-            simulator_run_status$message <- "Simulation %s ran unsuccessfully with errors" 
-            simulator_run_status$errors <- conditionMessage(e)
-          },
-          warning = function(w) {
-            simulator_run_status$successful <- TRUE
-            simulator_run_status$message <- "Simulation %s ran successfully with warnings"
-            simulator_run_status$warnings <- conditionMessage(w)
+            list(
+              successful = FALSE, message = "Model %s simulation ran unsuccessfully with errors",
+              errors = c(as.character(e))
+            )
           }
         )
+        if (is.null(run_status)) {
+          run_status <- list(successful = FALSE, message = "Model %s simulation had unknown failure without errors")
+        }
 
         # Substitute sample details into the simulator run status message
-        simulator_run_status$message <- self$get_message_sample(simulator_run_status$message, i)
+        run_status$message <- self$get_message_sample(run_status$message, i)
 
         # Check results directories
-        if (simulator_run_status$successful) {
+        if (run_status$successful) {
           results_dir <- file.path(self$results_dir, paste0("simulation", i))
           if (length(list.files(results_dir)) > 0) {
-            simulator_run_status$message <- paste0(simulator_run_status$message, " and the results were saved")
+            run_status$message <- paste0(run_status$message, " and the results were saved")
           } else {
-            simulator_run_status$successful <- FALSE
-            simulator_run_status$message <- paste0(simulator_run_status$message, ", but the results could not be saved in ", results_dir)
+            run_status$successful <- FALSE
+            run_status$message <- paste0(run_status$message, ", but the results could not be saved in ", results_dir)
           }
         }
 
-        return(simulator_run_status)
+        return(run_status)
       }
       doParallel::stopImplicitCluster()
 
@@ -313,7 +335,8 @@ metaRangeParallel <- R6::R6Class("metaRangeParallel",
     .sample_data = NULL,
     .seed = sample.int(1000000, 1),
     .simulation_template = NULL,
-    .species_name = "species_1"
+    .species_name = "species_1",
+    .warning_messages = NULL
   ),
   active = list(
     
@@ -462,6 +485,18 @@ metaRangeParallel <- R6::R6Class("metaRangeParallel",
             self$simulation_template$add_species(private$.species_name)
           }
         }
+      }
+    },
+
+    # ------- // warning_messages ------------
+    #' @field warning_messages A vector of warning messages encountered when 
+    #' setting model attributes.
+    warning_messages = function(value) {
+      if (missing(value)) {
+        private$.warning_messages
+      } else {
+        checkmate::assert_character(value, null.ok = TRUE)
+        private$.warning_messages <- value
       }
     }
 
