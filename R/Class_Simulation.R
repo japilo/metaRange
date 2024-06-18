@@ -134,12 +134,18 @@ metaRangeSimulation <- R6::R6Class("metaRangeSimulation",
         #' @param ... Parameters passed via the inherited class constructor (defined in initialize and run via new).
         #' @return New object of the current (inherited) class.
         new_clone = function(...) {
-            copy <- self$object_generator$new(object_generator = self$object_generator,
-                                              source_environment = self$environment$sourceSDS,
-                                              seed = self$seed)
+            copy <- self$object_generator$new(
+                object_generator = self$object_generator,
+                source_environment = self$environment$sourceSDS,
+                seed = self$seed
+            )
 
             if (length(self$globals)) {
-                copy$globals <- self$globals
+                lapply(names(self$globals), function(name) {
+                    args <- list()
+                    args[[name]] <- self$globals[[name]]
+                    do.call(copy$add_globals, args)
+                })
             }
 
             # Add global processes if they exist
@@ -168,7 +174,16 @@ metaRangeSimulation <- R6::R6Class("metaRangeSimulation",
                         }
                     }
                     if (length(self[[name]]$traits)) {
-                        copy[[name]]$traits <- self[[name]]$traits
+                        for (trait in names(self[[name]]$traits)) {
+                            pop_level <- is.matrix(self[[name]]$traits[[trait]]) && 
+                                         all(dim(self[[name]]$traits[[trait]]) == dim(self$environment$sourceSDS))
+                                args <- list(
+                                    species = name,
+                                    population_level = pop_level
+                                )
+                                args[[trait]] <- self[[name]]$traits[[trait]]
+                                do.call(copy$add_traits, args)
+                        }
                     }
                 })
             }

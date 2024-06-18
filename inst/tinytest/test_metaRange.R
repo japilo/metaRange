@@ -275,10 +275,14 @@ expect_true("test_species" %in% copy$species_names())
 expect_inherits(copy, "metaRangeSimulation")
 
 sim$add_globals(a = 1, b = 2) 
-copy <- sim$new_clone() 
+copy <- sim$new_clone()
 
 expect_equal(copy$globals$a, 1) 
 expect_equal(copy$globals$b, 2)
+
+sim$add_globals(c = "c")
+
+expect_null(copy$globals$c)
 
 sim$add_process(
     process_name = "global_process",
@@ -308,5 +312,9 @@ copy <- sim$new_clone()
 expect_equal(copy$test_species$traits$a, matrix(1, nrow = 5, ncol = 5)) 
 expect_equal(copy$test_species$traits$b, 2) 
 expect_equal(copy$test_species$traits$c, "c")
+
+sim$add_traits("test_species", population_level = FALSE, d = FALSE)
+
+expect_null(copy$test_species$traits$d)
 
 rm(testfun, testfun_deueue, sim_env, n, simlength, temperature, precipitation, habitat)
