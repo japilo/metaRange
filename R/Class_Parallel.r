@@ -164,8 +164,7 @@ metaRangeParallel <- R6::R6Class("metaRangeParallel",
               } else if (any(names(self$sample_data) %in% inputs)) {
                 generator$set_attributes(params = sample_list[inputs])
               }
-              print(paste("Dispersal generator inputs: ", paste(inputs, collapse=", ")))
-              print(paste("Generative requirements satisfied: ", paste(generator$generative_requirements_satisfied(), collapse = ", ")))
+
               if (generator$generative_requirements_satisfied()$dispersal_data) {
                 generator$calculate_dispersals(type = "matrix")
                 new_input <- setNames(list(generator$dispersal_matrix), self$generative_names[[i]])

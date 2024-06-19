@@ -1,3 +1,25 @@
+## Test initialization
+
+sim_template <- metaRangeSimulation$new()
+sample_data <- data.frame(
+  "temperature_maximum" = c(1, 2, 3),
+  "temperature_optimum" = c(4, 5, 6),
+  "temperature_minimum" = c(7, 8, 9)
+)
+results_dir <- tempdir()
+
+parallel_obj <- metaRangeParallel$new(
+  simulation_template = sim_template,
+  sample_data = sample_data,
+  results_dir = results_dir
+)
+
+expect_equal(parallel_obj$simulation_template, sim_template)
+expect_equal(parallel_obj$sample_data, sample_data)
+expect_equal(parallel_obj$results_dir, results_dir)
+
+## Test set_model_sample and run methods
+
 sim_manager <- metaRangeParallel$new()
 simlength <- 3
 n <- 5
@@ -108,9 +130,44 @@ model_clone <- sim_manager$simulation_template$new_clone()
 expect_silent(sim_manager$set_model_sample(model_clone, 1))
 expect_equal(model_clone$test_species$traits$abundance, matrix(1000, ncol = n, nrow = n))
 expect_equal(model_clone$globals$results_dir, file.path(sim_manager$results_dir, "simulation1"))
+expect_equal(model_clone$test_species$traits$carrying_capacity, 1000)
 expect_true("dispersal1" %in% names(model_clone$test_species$traits))
 
 # Run
 sim_manager$results_dir <- tempdir()
 sim_manager$run()
 expect_true("simulation_log.txt" %in% list.files(sim_manager$results_dir))
+
+
+## Test get_message_sample method
+parallel_obj <- metaRangeParallel$new()
+
+status_message <- "Model %s simulation ran successfully"
+sample_index <- 1
+
+message <- parallel_obj$get_message_sample(status_message, sample_index)
+
+expect_equal(message, "Model sample 1 simulation ran successfully")
+
+## Test log_simulation method
+parallel_obj <- metaRangeParallel$new()
+
+simulation_log <- list(
+  list(successful = TRUE, message = "Simulation 1 ran successfully"),
+  list(successful = FALSE, message = "Simulation 2 ran unsuccessfully with errors", errors = c("Error 1", "Error 2")),
+  list(successful = TRUE, message = "Simulation 3 ran successfully")
+)
+
+expected_log <- list(
+  summary = "2 of 3 sample models ran and saved results successfully",
+  failed_indices = c(2),
+  warning_indices = NULL,
+  full_log = simulation_log
+)
+
+log <- parallel_obj$log_simulation(simulation_log)
+
+expect_equal(log$summary, expected_log$summary)
+expect_equal(log$failed_indices, expected_log$failed_indices)
+expect_equal(log$warning_indices, expected_log$warning_indices)
+expect_equal(log$full_log, expected_log$full_log)
