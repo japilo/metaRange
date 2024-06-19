@@ -164,7 +164,8 @@ metaRangeParallel <- R6::R6Class("metaRangeParallel",
               } else if (any(names(self$sample_data) %in% inputs)) {
                 generator$set_attributes(params = sample_list[inputs])
               }
-
+              print(paste("Dispersal generator inputs: ", paste(inputs, collapse=", ")))
+              print(paste("Generative requirements satisfied: ", paste(generator$generative_requirements_satisfied(), collapse = ", ")))
               if (generator$generative_requirements_satisfied()$dispersal_data) {
                 generator$calculate_dispersals(type = "matrix")
                 new_input <- setNames(list(generator$dispersal_matrix), self$generative_names[[i]])
@@ -219,8 +220,6 @@ metaRangeParallel <- R6::R6Class("metaRangeParallel",
           }
         }
       }
-
-      return(simulation)
     },
 
 
@@ -388,9 +387,10 @@ metaRangeParallel <- R6::R6Class("metaRangeParallel",
           cli::cli_abort("Generators must be a Generator object or a list of Generator objects.")
         }
         
-        self$generative_names <- lapply(private$.generators, function(generator) {
+        self$generative_names <- lapply(seq_along(private$.generators), function(i) {
+          generator <- private$.generators[[i]]
           if ("DispersalGenerator" %in% class(generator)) {
-            paste0("dispersal", sum(sapply(private$.generators, function(gen) "DispersalGenerator" %in% class(gen))))
+            paste0("dispersal", i)
           } else {
             generator$outputs
           }
