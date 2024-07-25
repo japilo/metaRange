@@ -27,6 +27,8 @@ inherited class) objects for generating simulation model values.}
 \item{\code{parallel_threads}}{\verb{<integer>} number of parallel threads to run
 simulations.}
 
+\item{\code{register_parallel}}{\verb{<logical>} Should the metaRangeParallel object register parallel cores? If FALSE, the user must register parallel cores outside of this R6 object on their own. For the default value, TRUE, \code{metaRangeParallel} does it for you.}
+
 \item{\code{results_dir}}{\verb{<character>} directory where results will be saved.}
 
 \item{\code{sample_data}}{A data frame of sampled parameters for each simulation.}
@@ -37,6 +39,9 @@ simulations.}
 with processes and traits common to all simulations.}
 
 \item{\code{species_name}}{\verb{<character>} name of species being modeled}
+
+\item{\code{warning_messages}}{A vector of warning messages encountered when
+setting model attributes.}
 }
 \if{html}{\out{</div>}}
 }

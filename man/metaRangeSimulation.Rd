@@ -166,6 +166,8 @@ sim$summary()
 \describe{
 \item{\code{ID}}{\verb{<string>} simulation identification.}
 
+\item{\code{object_generator}}{Class object generator used to create new clones, particularly for user inheritance.}
+
 \item{\code{globals}}{\verb{<environment>} a place to store global variables.
 I.e. variables and data that are no specific to one species.}
 
@@ -194,6 +196,7 @@ Use \code{set_stime_layer_mapping} to set these values.}
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-metaRangeSimulation-new}{\code{metaRangeSimulation$new()}}
+\item \href{#method-metaRangeSimulation-new_clone}{\code{metaRangeSimulation$new_clone()}}
 \item \href{#method-metaRangeSimulation-add_globals}{\code{metaRangeSimulation$add_globals()}}
 \item \href{#method-metaRangeSimulation-set_time_layer_mapping}{\code{metaRangeSimulation$set_time_layer_mapping()}}
 \item \href{#method-metaRangeSimulation-get_time_layer_mapping}{\code{metaRangeSimulation$get_time_layer_mapping()}}
@@ -216,7 +219,12 @@ Use \code{set_stime_layer_mapping} to set these values.}
 \subsection{Method \code{new()}}{
 Creates a new \link{metaRangeSimulation} object.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{metaRangeSimulation$new(source_environment, ID = NULL, seed = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{metaRangeSimulation$new(
+  source_environment,
+  ID = NULL,
+  seed = NULL,
+  object_generator = NULL
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -236,6 +244,9 @@ Will be set automatically if none is specified.}
 
 \item{\code{seed}}{\verb{<integer>} optional seed for the random number generator.
 Will be set automatically if none is specified.}
+
+\item{\code{object_generator}}{Class object generator for creating deep clones.
+Typically the user does not need to specify this.}
 }
 \if{html}{\out{</div>}}
 }
@@ -252,6 +263,26 @@ sim
 
 }
 
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-metaRangeSimulation-new_clone"></a>}}
+\if{latex}{\out{\hypertarget{method-metaRangeSimulation-new_clone}{}}}
+\subsection{Method \code{new_clone()}}{
+Creates a new (re-initialized) object of the current (inherited) object class with optionally passed parameters.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{metaRangeSimulation$new_clone(...)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{...}}{Parameters passed via the inherited class constructor (defined in initialize and run via new).}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+New object of the current (inherited) class.
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-metaRangeSimulation-add_globals"></a>}}

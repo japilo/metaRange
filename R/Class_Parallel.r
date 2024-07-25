@@ -251,7 +251,10 @@ metaRangeParallel <- R6::R6Class("metaRangeParallel",
       self$set_model_sample(model, 1)
       model <- NULL
 
-      doParallel::registerDoParallel(cores = self$parallel_threads)
+      if (self$register_parallel == TRUE) {
+        doParallel::registerDoParallel(cores = self$parallel_threads)
+      }
+
       simulation_log <- foreach(i = 1:nrow(self$sample_data),
                           .packages = c("raster"),
                           .errorhandling = c("pass")) %dopar% {
@@ -413,6 +416,16 @@ metaRangeParallel <- R6::R6Class("metaRangeParallel",
       }
     },
 
+    # --------- // register_parallel ----------------
+    #' @field register_parallel `<logical>` Should the metaRangeParallel object register parallel cores? If FALSE, the user must register parallel cores outside of this R6 object on their own. For the default value, TRUE, `metaRangeParallel` does it for you.
+    register_parallel = function(value) {
+      if (missing(value)) {
+        private$.register_parallel
+      } else {
+        checkmate::assert_logical(value)
+        private$.register_parallel <- value
+      }
+    },
 
     # --------- // results_dir ----------------
     #' @field results_dir `<character>` directory where results will be saved.

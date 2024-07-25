@@ -86,6 +86,8 @@ metaRangeSimulation <- R6::R6Class("metaRangeSimulation",
         #' Will be set automatically if none is specified.
         #' @param seed `<integer>` optional seed for the random number generator.
         #' Will be set automatically if none is specified.
+        #' @param object_generator Class object generator for creating deep clones.
+        #' Typically the user does not need to specify this.
         #' @return A `<metaRangeSimulation>` object.
         #' @examples
         #' sim_env <- terra::sds(terra::rast(vals = 1, nrow = 2, ncol = 2))
