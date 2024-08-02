@@ -256,7 +256,7 @@ metaRangeParallel <- R6::R6Class("metaRangeParallel",
       }
 
       simulation_log <- foreach(i = 1:nrow(self$sample_data),
-                          .packages = c("raster"),
+                          .packages = c("raster", "metaRange"),
                           .export = c("self"),
                           .errorhandling = c("pass")) %dopar% {
 
