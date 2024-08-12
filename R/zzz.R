@@ -18,7 +18,7 @@
 # https://roxygen2.r-lib.org/articles/rd-other.html
 
 # import compiled code
-#' @useDynLib metaRange
+#' @useDynLib metaRange, .registration = TRUE
 
 # Import some functions from the 'Imports' packages
 # To suppress warnings about 'All inputs should be used'
