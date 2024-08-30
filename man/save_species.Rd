@@ -4,7 +4,15 @@
 \alias{save_species}
 \title{Save function}
 \usage{
-save_species(x, traits = NULL, prefix = NULL, path, overwrite = FALSE, ...)
+save_species(
+  x,
+  traits = NULL,
+  prefix = NULL,
+  path,
+  overwrite = FALSE,
+  raster = TRUE,
+  ...
+)
 }
 \arguments{
 \item{x}{\verb{<metaRangeSpecies>} \link{metaRangeSpecies} object.}
@@ -18,7 +26,11 @@ If \code{NULL}, all traits are saved.}
 
 \item{overwrite}{\verb{<boolean>} overwrite existing files.}
 
-\item{...}{additional arguments passed to \link[terra:writeRaster]{terra::writeRaster}.}
+\item{raster}{\verb{<boolean>} Should matrix traits be saved as rasters or as
+matrices compressed to a \code{.qs} file? \code{TRUE} by default.}
+
+\item{...}{additional arguments passed to \link[terra:writeRaster]{terra::writeRaster} or
+\link[qs:qsave]{qs::qsave} (if \code{raster} is \code{FALSE}).}
 }
 \value{
 \verb{<invisible character>} the paths to the saved files.

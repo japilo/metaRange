@@ -55,7 +55,8 @@ Imports:
     checkmate,
     grDevices,
     graphics,
-    utils
+    utils,
+    qs
 Suggests:
     knitr,
     rmarkdown,

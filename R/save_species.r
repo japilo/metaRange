@@ -24,7 +24,10 @@
 #' @param prefix `<string>` prefix for the file names or `NULL`.
 #' @param path `<string>`path to the directory where the files are saved.
 #' @param overwrite `<boolean>` overwrite existing files.
-#' @param ... additional arguments passed to [terra::writeRaster].
+#' @param raster `<boolean>` Should matrix traits be saved as rasters or as
+#' matrices compressed to a `.qs` file? `TRUE` by default.
+#' @param ... additional arguments passed to [terra::writeRaster] or
+#' [qs::qsave] (if `raster` is `FALSE`).
 #' @details The generated file names are of the form
 #' `file.path(path, paste0(prefix, species_name, "_", trait_name, ".file_extension"))`.
 #' If the trait is in a matrix or raster form, the file extension is `.tif`. Otherwise it is `.csv`.
@@ -79,7 +82,8 @@
 #' stopifnot(all(!file.exists(res_path, res_path3)))
 #' @return `<invisible character>` the paths to the saved files.
 #' @export
-save_species <- function(x, traits = NULL, prefix = NULL, path, overwrite = FALSE, ...) {
+save_species <- function(x, traits = NULL, prefix = NULL, path,
+                         overwrite = FALSE, raster = TRUE, ...) {
     checkmate::assert_class(x, "metaRangeSpecies")
     checkmate::assert_character(traits, null.ok = TRUE, unique = TRUE)
     if (!checkmate::test_string(prefix, null.ok = TRUE)) {
@@ -87,6 +91,7 @@ save_species <- function(x, traits = NULL, prefix = NULL, path, overwrite = FALS
         checkmate::assert_string(prefix, null.ok = TRUE)
     }
     checkmate::assert_flag(overwrite)
+    checkmate::assert_flag(raster)
     if (is.null(traits)) {
         traits <- names(x[["traits"]])
     }
@@ -98,21 +103,27 @@ save_species <- function(x, traits = NULL, prefix = NULL, path, overwrite = FALS
             next
         }
         if (inherits(x$traits[[att]], "matrix")) {
-            dim_m <- dim(x$traits[[att]])[c(1, 2)]
-            dim_r <- dim(x$sim$environment$sourceSDS)[c(1, 2)]
+            if (raster) {
+                dim_m <- dim(x$traits[[att]])[c(1, 2)]
+                dim_r <- dim(x$sim$environment$sourceSDS)[c(1, 2)]
 
-            if (!is.null(dim_m) && all(dim_m == dim_r)) {
-                r <- terra::rast(
-                    x$sim$environment$sourceSDS[[1]],
-                    nlyrs = 1,
-                    vals = x$traits[[att]]
-                )
+                if (!is.null(dim_m) && all(dim_m == dim_r)) {
+                    r <- terra::rast(
+                        x$sim$environment$sourceSDS[[1]],
+                        nlyrs = 1,
+                        vals = x$traits[[att]]
+                    )
+                } else {
+                    r <- terra::rast(x$traits[[att]])
+                }
+                full_path <- file.path(path, paste0(prefix, x$name, "_", att, ".tif"))
+                checkmate::assert_path_for_output(full_path, overwrite = overwrite)
+                terra::writeRaster(r, full_path, overwrite = overwrite, ...)
             } else {
-                r <- terra::rast(x$traits[[att]])
+                full_path <- file.path(path, paste0(prefix, x$name, "_", att, ".qs"))
+                checkmate::assert_path_for_output(full_path, overwrite = overwrite)
+                qs::qsave(x$traits[[att]], full_path, ...)
             }
-            full_path <- file.path(path, paste0(prefix, x$name, "_", att, ".tif"))
-            checkmate::assert_path_for_output(full_path, overwrite = overwrite)
-            terra::writeRaster(r, full_path, overwrite = overwrite, ...)
         } else if (checkmate::test_atomic(x$traits[[att]])) {
             full_path <- file.path(path, paste0(prefix, x$name, "_", att, ".csv"))
             checkmate::assert_path_for_output(full_path, overwrite = overwrite)
