@@ -21,7 +21,7 @@ setting simulation traits.}
 \item{\code{generative_names}}{\verb{<list>} List of names of outputs from
 generators.}
 
-\item{\code{generators}}{A list of generators (\code{\link{Generator}} or
+\item{\code{generators}}{A list of generators (\code{\link[poems:Generator]{Generator}} or
 inherited class) objects for generating simulation model values.}
 
 \item{\code{parallel_threads}}{\verb{<integer>} number of parallel threads to run

@@ -32,12 +32,23 @@ res_path2 <- save_species(
     traits = "trait_01",
     prefix = file_prefix,
     path = directory_name,
-    overwrite = TRUE
+    overwrite = "overwrite"
 )
 expect_identical(
     res_path,
     res_path2,
     info = "Overwriting works."
+)
+expect_error(
+    save_species(
+        test_sim$species_01,
+        traits = "trait_01",
+        prefix = file_prefix,
+        path = directory_name,
+        overwrite = "error"
+    ),
+    pattern = "Assertion.*",
+    info = "Error on overwrite without 'overwrite' argument."
 )
 
 res_path3 <- save_species(
@@ -48,7 +59,8 @@ res_path3 <- save_species(
 expect_true(
     all(
         length(res_path3) == length(names(test_sim$species_01$traits)),
-        file.exists(res_path3)),
+        file.exists(res_path3)
+    ),
     info = "Saving all traits works."
 )
 

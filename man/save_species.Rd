@@ -9,7 +9,7 @@ save_species(
   traits = NULL,
   prefix = NULL,
   path,
-  overwrite = FALSE,
+  overwrite = "error",
   raster = TRUE,
   ...
 )
@@ -24,10 +24,14 @@ If \code{NULL}, all traits are saved.}
 
 \item{path}{\verb{<string>}path to the directory where the files are saved.}
 
-\item{overwrite}{\verb{<boolean>} overwrite existing files.}
+\item{overwrite}{\verb{<character>} can be set to "overwrite", "error" or "skip".
+If set to "overwrite", existing files will be overwritten.
+If set to "error", an error is thrown if the file already exists.
+If set to "skip", existing files will not be overwritten and the function
+will skip writing this output to disk.}
 
-\item{raster}{\verb{<boolean>} Should matrix traits be saved as rasters or as
-matrices compressed to a \code{.qs} file? \code{TRUE} by default.}
+\item{raster}{\verb{<boolean>} Should matrix traits be saved as rasters (\code{TRUE})
+or as matrices compressed to a \code{.qs} file (\code{FALSE})? \code{TRUE} by default.}
 
 \item{...}{additional arguments passed to \link[terra:writeRaster]{terra::writeRaster} or
 \link[qs:qsave]{qs::qsave} (if \code{raster} is \code{FALSE}).}
@@ -41,9 +45,10 @@ Saves the specified traits of a \link{metaRangeSpecies} object.
 \details{
 The generated file names are of the form
 \code{file.path(path, paste0(prefix, species_name, "_", trait_name, ".file_extension"))}.
-If the trait is in a matrix or raster form, the file extension is \code{.tif}. Otherwise it is \code{.csv}.
-The prefix is optional and mainly useful to add a time step to the file name, in case the trait
-is saved multiple times during a simulation.
+If the trait is in a matrix or raster form, the file extension is \code{.tif} or
+\code{.qs}. Otherwise it is \code{.csv}.
+The prefix is optional and mainly useful to add a time step to the file
+name, in case the trait is saved multiple times during a simulation.
 }
 \examples{
 sim_env <- terra::sds(terra::rast(vals = 1, nrow = 2, ncol = 2))
@@ -78,7 +83,7 @@ res_path2 <- save_species(
     traits = "trait_01",
     prefix = file_prefix,
     path = directory_name,
-    overwrite = TRUE
+    overwrite = "overwrite"
 )
 stopifnot(identical(res_path, res_path2))
 

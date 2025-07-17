@@ -1,3 +1,9 @@
+# metaRange 1.3.0 (July Pilowsky's branch)
+* Added a `metaRangeParallel` class to handle parallel simulations, as well as distribution of different parameters to each parallel simulation.
+* Added compatibility with the `poems` package for generating simulation model values.
+* The `save_species` function can now write matrix data to `.qs` files.
+* The `save_species` function has more options for overwriting existing files ("overwrite", "error", "skip").
+
 # metaRange 1.2.0
 
 * Expand and rewrite vignettes (how to save a time series of traits).

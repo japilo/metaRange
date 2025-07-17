@@ -23,16 +23,21 @@
 #' If `NULL`, all traits are saved.
 #' @param prefix `<string>` prefix for the file names or `NULL`.
 #' @param path `<string>`path to the directory where the files are saved.
-#' @param overwrite `<boolean>` overwrite existing files.
-#' @param raster `<boolean>` Should matrix traits be saved as rasters or as
-#' matrices compressed to a `.qs` file? `TRUE` by default.
+#' @param overwrite `<character>` can be set to "overwrite", "error" or "skip".
+#' If set to "overwrite", existing files will be overwritten.
+#' If set to "error", an error is thrown if the file already exists.
+#' If set to "skip", existing files will not be overwritten and the function
+#' will skip writing this output to disk.
+#' @param raster `<boolean>` Should matrix traits be saved as rasters (`TRUE`)
+#' or as matrices compressed to a `.qs` file (`FALSE`)? `TRUE` by default.
 #' @param ... additional arguments passed to [terra::writeRaster] or
 #' [qs::qsave] (if `raster` is `FALSE`).
 #' @details The generated file names are of the form
 #' `file.path(path, paste0(prefix, species_name, "_", trait_name, ".file_extension"))`.
-#' If the trait is in a matrix or raster form, the file extension is `.tif`. Otherwise it is `.csv`.
-#' The prefix is optional and mainly useful to add a time step to the file name, in case the trait
-#' is saved multiple times during a simulation.
+#' If the trait is in a matrix or raster form, the file extension is `.tif` or
+#' `.qs`. Otherwise it is `.csv`.
+#' The prefix is optional and mainly useful to add a time step to the file
+#' name, in case the trait is saved multiple times during a simulation.
 #' @examples
 #' sim_env <- terra::sds(terra::rast(vals = 1, nrow = 2, ncol = 2))
 #' names(sim_env) <- "env_01"
@@ -66,7 +71,7 @@
 #'     traits = "trait_01",
 #'     prefix = file_prefix,
 #'     path = directory_name,
-#'     overwrite = TRUE
+#'     overwrite = "overwrite"
 #' )
 #' stopifnot(identical(res_path, res_path2))
 #'
@@ -82,15 +87,22 @@
 #' stopifnot(all(!file.exists(res_path, res_path3)))
 #' @return `<invisible character>` the paths to the saved files.
 #' @export
-save_species <- function(x, traits = NULL, prefix = NULL, path,
-                         overwrite = FALSE, raster = TRUE, ...) {
+save_species <- function(
+    x,
+    traits = NULL,
+    prefix = NULL,
+    path,
+    overwrite = "error",
+    raster = TRUE,
+    ...
+) {
     checkmate::assert_class(x, "metaRangeSpecies")
     checkmate::assert_character(traits, null.ok = TRUE, unique = TRUE)
     if (!checkmate::test_string(prefix, null.ok = TRUE)) {
         prefix <- as.character(prefix)
         checkmate::assert_string(prefix, null.ok = TRUE)
     }
-    checkmate::assert_flag(overwrite)
+    checkmate::assert_subset(overwrite, c("overwrite", "error", "skip"))
     checkmate::assert_flag(raster)
     if (is.null(traits)) {
         traits <- names(x[["traits"]])
@@ -116,21 +128,65 @@ save_species <- function(x, traits = NULL, prefix = NULL, path,
                 } else {
                     r <- terra::rast(x$traits[[att]])
                 }
-                full_path <- file.path(path, paste0(prefix, x$name, "_", att, ".tif"))
-                checkmate::assert_path_for_output(full_path, overwrite = overwrite)
-                terra::writeRaster(r, full_path, overwrite = overwrite, ...)
+                full_path <- file.path(
+                    path,
+                    paste0(prefix, x$name, "_", att, ".tif")
+                )
+                if (overwrite == "skip" && file.exists(full_path)) {
+                    next
+                } else if (overwrite == "error") {
+                    checkmate::assert_path_for_output(
+                        full_path,
+                        overwrite = FALSE
+                    )
+                    terra::writeRaster(r, full_path, overwrite = FALSE, ...)
+                } else {
+                    checkmate::assert_path_for_output(
+                        full_path,
+                        overwrite = TRUE
+                    )
+                    terra::writeRaster(r, full_path, overwrite = TRUE, ...)
+                }
             } else {
-                full_path <- file.path(path, paste0(prefix, x$name, "_", att, ".qs"))
-                checkmate::assert_path_for_output(full_path, overwrite = overwrite)
-                qs::qsave(x$traits[[att]], full_path, ...)
+                full_path <- file.path(
+                    path,
+                    paste0(prefix, x$name, "_", att, ".qs")
+                )
+                if (overwrite == "skip" && file.exists(full_path)) {
+                    next
+                } else if (overwrite == "error") {
+                    checkmate::assert_path_for_output(
+                        full_path,
+                        overwrite = FALSE
+                    )
+                    qs::qsave(x$traits[[att]], full_path, ...)
+                } else {
+                    checkmate::assert_path_for_output(
+                        full_path,
+                        overwrite = TRUE
+                    )
+                    qs::qsave(x$traits[[att]], full_path, ...)
+                }
             }
         } else if (checkmate::test_atomic(x$traits[[att]])) {
-            full_path <- file.path(path, paste0(prefix, x$name, "_", att, ".csv"))
-            checkmate::assert_path_for_output(full_path, overwrite = overwrite)
-            write.csv(x$traits[[att]], full_path, row.names = FALSE)
+            full_path <- file.path(
+                path,
+                paste0(prefix, x$name, "_", att, ".csv")
+            )
+            if (overwrite == "skip" && file.exists(full_path)) {
+                next
+            } else if (overwrite == "error") {
+                checkmate::assert_path_for_output(full_path, overwrite = FALSE)
+                write.csv(x$traits[[att]], full_path, row.names = FALSE)
+            } else {
+                checkmate::assert_path_for_output(full_path, overwrite = TRUE)
+                write.csv(x$traits[[att]], full_path, row.names = FALSE)
+            }
         } else {
             warning(
-                "Couldn't save trait: ", att, " unknown format.\n",
+                "Couldn't save trait: ",
+                att,
+                " unknown format.\n",
                 "Use: [saveRDS()] to save arbitrary data."
             )
         }

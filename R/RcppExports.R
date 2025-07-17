@@ -58,7 +58,7 @@
 #' ))
 #' @export
 calculate_suitability <- function(vmax, vopt, vmin, venv) {
-    .Call('_metaRange_calculate_suitability', PACKAGE = 'metaRange', vmax, vopt, vmin, venv)
+    .Call(`_metaRange_calculate_suitability`, vmax, vopt, vmin, venv)
 }
 
 #' Helper Function for Breeding Season SIRI Simulation
@@ -118,7 +118,7 @@ calculate_suitability <- function(vmax, vopt, vmin, venv) {
 #' input population matrices.
 #' @export
 daily_siri_summer <- function(Sj_abundance, Sa_abundance, I1j_abundance, I1a_abundance, Rj_abundance, Ra_abundance, I2j_abundance, I2a_abundance, fecundity, transmission_Sj_summer, transmission_Sa_summer, transmission_Rj_summer, transmission_Ra_summer, recovery_I1j_summer, recovery_I1a_summer, recovery_I2j_summer, recovery_I2a_summer, mortality_Sj_summer, mortality_Sa_summer, mortality_I1j_summer, mortality_I1a_summer, mortality_Rj_summer, mortality_Ra_summer, mortality_I2j_summer, mortality_I2a_summer, season_length, abundance_threshold, density_max, habitat_suitability) {
-    .Call('_metaRange_daily_siri_summer', PACKAGE = 'metaRange', Sj_abundance, Sa_abundance, I1j_abundance, I1a_abundance, Rj_abundance, Ra_abundance, I2j_abundance, I2a_abundance, fecundity, transmission_Sj_summer, transmission_Sa_summer, transmission_Rj_summer, transmission_Ra_summer, recovery_I1j_summer, recovery_I1a_summer, recovery_I2j_summer, recovery_I2a_summer, mortality_Sj_summer, mortality_Sa_summer, mortality_I1j_summer, mortality_I1a_summer, mortality_Rj_summer, mortality_Ra_summer, mortality_I2j_summer, mortality_I2a_summer, season_length, abundance_threshold, density_max, habitat_suitability)
+    .Call(`_metaRange_daily_siri_summer`, Sj_abundance, Sa_abundance, I1j_abundance, I1a_abundance, Rj_abundance, Ra_abundance, I2j_abundance, I2a_abundance, fecundity, transmission_Sj_summer, transmission_Sa_summer, transmission_Rj_summer, transmission_Ra_summer, recovery_I1j_summer, recovery_I1a_summer, recovery_I2j_summer, recovery_I2a_summer, mortality_Sj_summer, mortality_Sa_summer, mortality_I1j_summer, mortality_I1a_summer, mortality_Rj_summer, mortality_Ra_summer, mortality_I2j_summer, mortality_I2a_summer, season_length, abundance_threshold, density_max, habitat_suitability)
 }
 
 #' Helper Function for Non-Breeding Season SIRI Simulation
@@ -178,7 +178,7 @@ daily_siri_summer <- function(Sj_abundance, Sa_abundance, I1j_abundance, I1a_abu
 #' input population matrices.
 #' @export
 daily_siri_winter <- function(Sj_abundance, Sa_abundance, I1j_abundance, I1a_abundance, Rj_abundance, Ra_abundance, I2j_abundance, I2a_abundance, transmission_Sj_winter, transmission_Sa_winter, transmission_Rj_winter, transmission_Ra_winter, recovery_I1j_winter, recovery_I1a_winter, recovery_I2j_winter, recovery_I2a_winter, mortality_Sj_winter, mortality_Sa_winter, mortality_I1j_winter, mortality_I1a_winter, mortality_Rj_winter, mortality_Ra_winter, mortality_I2j_winter, mortality_I2a_winter, season_length, abundance_threshold, density_max, habitat_suitability) {
-    .Call('_metaRange_daily_siri_winter', PACKAGE = 'metaRange', Sj_abundance, Sa_abundance, I1j_abundance, I1a_abundance, Rj_abundance, Ra_abundance, I2j_abundance, I2a_abundance, transmission_Sj_winter, transmission_Sa_winter, transmission_Rj_winter, transmission_Ra_winter, recovery_I1j_winter, recovery_I1a_winter, recovery_I2j_winter, recovery_I2a_winter, mortality_Sj_winter, mortality_Sa_winter, mortality_I1j_winter, mortality_I1a_winter, mortality_Rj_winter, mortality_Ra_winter, mortality_I2j_winter, mortality_I2a_winter, season_length, abundance_threshold, density_max, habitat_suitability)
+    .Call(`_metaRange_daily_siri_winter`, Sj_abundance, Sa_abundance, I1j_abundance, I1a_abundance, Rj_abundance, Ra_abundance, I2j_abundance, I2a_abundance, transmission_Sj_winter, transmission_Sa_winter, transmission_Rj_winter, transmission_Ra_winter, recovery_I1j_winter, recovery_I1a_winter, recovery_I2j_winter, recovery_I2a_winter, mortality_Sj_winter, mortality_Sa_winter, mortality_I1j_winter, mortality_I1a_winter, mortality_Rj_winter, mortality_Ra_winter, mortality_I2j_winter, mortality_I2a_winter, season_length, abundance_threshold, density_max, habitat_suitability)
 }
 
 #' Unweighted and fixed sized dispersal
@@ -193,7 +193,7 @@ daily_siri_winter <- function(Sj_abundance, Sa_abundance, I1j_abundance, I1a_abu
 #' @return `<numeric matrix>` The new abundance matrix.
 #' @keywords internal
 dispersal_fixed_unweighted <- function(abundance, dispersal_kernel) {
-    .Call('_metaRange_dispersal_fixed_unweighted', PACKAGE = 'metaRange', abundance, dispersal_kernel)
+    .Call(`_metaRange_dispersal_fixed_unweighted`, abundance, dispersal_kernel)
 }
 
 #' Weighted and fixed sized dispersal
@@ -208,7 +208,7 @@ dispersal_fixed_unweighted <- function(abundance, dispersal_kernel) {
 #' @return `<numeric matrix>` The new abundance matrix.
 #' @keywords internal
 dispersal_fixed_weighted <- function(abundance, weights, dispersal_kernel) {
-    .Call('_metaRange_dispersal_fixed_weighted', PACKAGE = 'metaRange', abundance, weights, dispersal_kernel)
+    .Call(`_metaRange_dispersal_fixed_weighted`, abundance, weights, dispersal_kernel)
 }
 
 #' Metabolic scaling
@@ -294,7 +294,7 @@ dispersal_fixed_weighted <- function(abundance, weights, dispersal_kernel) {
 #' )
 #' @export
 metabolic_scaling <- function(normalization_constant, scaling_exponent, mass, temperature, E, k = 8.617333e-05) {
-    .Call('_metaRange_metabolic_scaling', PACKAGE = 'metaRange', normalization_constant, scaling_exponent, mass, temperature, E, k)
+    .Call(`_metaRange_metabolic_scaling`, normalization_constant, scaling_exponent, mass, temperature, E, k)
 }
 
 #' Ricker reproduction model with Allee effects
@@ -395,7 +395,7 @@ metabolic_scaling <- function(normalization_constant, scaling_exponent, mass, te
 #'
 #' @export
 ricker_allee_reproduction_model <- function(abundance, reproduction_rate, carrying_capacity, allee_threshold, overcomp_factor = as.numeric( c(1.0))) {
-    .Call('_metaRange_ricker_allee_reproduction_model', PACKAGE = 'metaRange', abundance, reproduction_rate, carrying_capacity, allee_threshold, overcomp_factor)
+    .Call(`_metaRange_ricker_allee_reproduction_model`, abundance, reproduction_rate, carrying_capacity, allee_threshold, overcomp_factor)
 }
 
 #' Ricker reproduction model
@@ -469,6 +469,6 @@ ricker_allee_reproduction_model <- function(abundance, reproduction_rate, carryi
 #' \doi{10.1139/f54-039}
 #' @export
 ricker_reproduction_model <- function(abundance, reproduction_rate, carrying_capacity) {
-    .Call('_metaRange_ricker_reproduction_model', PACKAGE = 'metaRange', abundance, reproduction_rate, carrying_capacity)
+    .Call(`_metaRange_ricker_reproduction_model`, abundance, reproduction_rate, carrying_capacity)
 }
 
