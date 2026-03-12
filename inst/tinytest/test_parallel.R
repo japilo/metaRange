@@ -36,34 +36,35 @@ names(sim_env) <- c("temperature", "precipitation", "habitat")
 test_simulation <- create_simulation(sim_env)
 test_simulation$add_species("test_species")
 test_simulation$add_process(
-    species = "test_species",
-    process_name = "calculate_general_suitability",
-    process_fun = function() {
-        self$traits[["suitability"]] <- (
-            calculate_suitability(
-                self$traits$temperature_maximum,
-                self$traits$temperature_optimum,
-                self$traits$temperature_minimum,
-                self$sim$environment$current[["temperature"]]) *
-            calculate_suitability(
-                self$traits$precipitation_maximum,
-                self$traits$precipitation_optimum,
-                self$traits$precipitation_minimum,
-                self$sim$environment$current[["precipitation"]]) *
-            self$sim$environment$current[["habitat"]])
-    },
-    execution_priority = 1
+  species = "test_species",
+  process_name = "calculate_general_suitability",
+  process_fun = function() {
+    self$traits[["suitability"]] <- (calculate_suitability(
+      self$traits$temperature_maximum,
+      self$traits$temperature_optimum,
+      self$traits$temperature_minimum,
+      self$sim$environment$current[["temperature"]]
+    ) *
+      calculate_suitability(
+        self$traits$precipitation_maximum,
+        self$traits$precipitation_optimum,
+        self$traits$precipitation_minimum,
+        self$sim$environment$current[["precipitation"]]
+      ) *
+      self$sim$environment$current[["habitat"]])
+  },
+  execution_priority = 1
 )
 test_simulation$add_process(
   species = "test_species",
   process_name = "reproduction",
   process_fun = function() {
-      self$traits[["abundance"]] <-
-          ricker_reproduction_model(
-              self$traits[["abundance"]],
-              self$traits[["reproduction_rate"]] * self$traits[["suitability"]],
-              self$traits[["carrying_capacity"]] * self$traits[["suitability"]]
-          )
+    self$traits[["abundance"]] <-
+      ricker_reproduction_model(
+        self$traits[["abundance"]],
+        self$traits[["reproduction_rate"]] * self$traits[["suitability"]],
+        self$traits[["carrying_capacity"]] * self$traits[["suitability"]]
+      )
   },
   execution_priority = 3
 )
@@ -85,10 +86,12 @@ generator_a$add_function_template(
 
 simulator <- poems::SimulatorReference$new()
 region <- poems::Region$new(coordinates = array(c(1:4, 4:1), c(7, 2)))
-conductance_raster <- raster::stack(replicate(10,+(region$region_raster > 0)))
+conductance_raster <- raster::stack(replicate(10, +(region$region_raster > 0)))
 conductance_raster[[2]][11] <- 0
-dispersal_friction = poems::DispersalFriction$new(region = region,
-                                            conductance = conductance_raster)
+dispersal_friction = poems::DispersalFriction$new(
+  region = region,
+  conductance = conductance_raster
+)
 dispersal_gen1 <- poems::DispersalGenerator$new(
   dispersal_friction = dispersal_friction,
   dispersal_proportion = 0.6,
@@ -125,13 +128,32 @@ sim_manager$sample_data <- data.frame(
 )
 sim_manager$generators <- list(dispersal_gen1, dispersal_gen2, generator_a)
 
-# Set model sample
+# Set model sample with default IDs
 model_clone <- sim_manager$simulation_template$new_clone()
-expect_silent(sim_manager$set_model_sample(model_clone, 1))
-expect_equal(model_clone$test_species$traits$abundance, matrix(1000, ncol = n, nrow = n))
-expect_equal(model_clone$globals$results_dir, file.path(sim_manager$results_dir, "simulation1"))
+expect_silent(sim_manager$set_model_sample(
+  model_clone,
+  1,
+  sim_manager$sample_id[1]
+))
+expect_equal(
+  model_clone$test_species$traits$abundance,
+  matrix(1000, ncol = n, nrow = n)
+)
+expect_equal(
+  model_clone$globals$results_dir,
+  file.path(sim_manager$results_dir, "simulation1")
+)
 expect_equal(model_clone$test_species$traits$carrying_capacity, 1000)
 expect_true("dispersal1" %in% names(model_clone$test_species$traits))
+
+# Set model sample with custom IDs
+sim_manager$sample_id <- c("custom_run_1")
+model_clone2 <- sim_manager$simulation_template$new_clone()
+expect_silent(sim_manager$set_model_sample(model_clone2, 1, "custom_run_1"))
+expect_equal(
+  model_clone2$globals$results_dir,
+  file.path(sim_manager$results_dir, "simulationcustom_run_1")
+)
 
 # Run
 sim_manager$results_dir <- tempdir()
@@ -139,8 +161,80 @@ sim_manager$run()
 expect_true("simulation_log.txt" %in% list.files(sim_manager$results_dir))
 
 
-## Test get_message_sample method
-parallel_obj <- metaRangeParallel$new()
+## Test sample_id default initialization
+parallel_obj <- metaRangeParallel$new(
+  simulation_template = sim_template,
+  sample_data = sample_data,
+  results_dir = results_dir
+)
+
+expect_equal(parallel_obj$sample_id, c("1", "2", "3"))
+
+## Test sample_id custom initialization
+custom_ids <- c("run_A", "run_B", "run_C")
+parallel_obj_custom <- metaRangeParallel$new(
+  simulation_template = sim_template,
+  sample_data = sample_data,
+  results_dir = results_dir,
+  sample_id = custom_ids
+)
+
+expect_equal(parallel_obj_custom$sample_id, custom_ids)
+
+## Test sample_id validation - empty strings
+expect_error(
+  {
+    parallel_obj <- metaRangeParallel$new(
+      simulation_template = sim_template,
+      sample_data = sample_data,
+      results_dir = results_dir,
+      sample_id = c("run_A", "", "run_C")
+    )
+  }
+)
+
+## Test sample_id validation - duplicates
+expect_error(
+  {
+    parallel_obj <- metaRangeParallel$new(
+      simulation_template = sim_template,
+      sample_data = sample_data,
+      results_dir = results_dir,
+      sample_id = c("run_A", "run_A", "run_C")
+    )
+  }
+)
+
+## Test sample_id validation - path separators
+expect_error(
+  {
+    parallel_obj <- metaRangeParallel$new(
+      simulation_template = sim_template,
+      sample_data = sample_data,
+      results_dir = results_dir,
+      sample_id = c("run/A", "run_B", "run_C")
+    )
+  }
+)
+
+## Test sample_id length validation
+expect_error(
+  {
+    parallel_obj <- metaRangeParallel$new(
+      simulation_template = sim_template,
+      sample_data = sample_data,
+      results_dir = results_dir,
+      sample_id = c("run_A", "run_B")
+    )
+  }
+)
+
+## Test get_message_sample method with default IDs
+parallel_obj <- metaRangeParallel$new(
+  simulation_template = sim_template,
+  sample_data = sample_data,
+  results_dir = results_dir
+)
 
 status_message <- "Model %s simulation ran successfully"
 sample_index <- 1
@@ -149,12 +243,31 @@ message <- parallel_obj$get_message_sample(status_message, sample_index)
 
 expect_equal(message, "Model sample 1 simulation ran successfully")
 
+## Test get_message_sample method with custom IDs
+parallel_obj_custom <- metaRangeParallel$new(
+  simulation_template = sim_template,
+  sample_data = sample_data,
+  results_dir = results_dir,
+  sample_id = c("experiment_alpha", "experiment_beta", "experiment_gamma")
+)
+
+message <- parallel_obj_custom$get_message_sample(status_message, 2)
+
+expect_equal(
+  message,
+  "Model sample experiment_beta simulation ran successfully"
+)
+
 ## Test log_simulation method
 parallel_obj <- metaRangeParallel$new()
 
 simulation_log <- list(
   list(successful = TRUE, message = "Simulation 1 ran successfully"),
-  list(successful = FALSE, message = "Simulation 2 ran unsuccessfully with errors", errors = c("Error 1", "Error 2")),
+  list(
+    successful = FALSE,
+    message = "Simulation 2 ran unsuccessfully with errors",
+    errors = c("Error 1", "Error 2")
+  ),
   list(successful = TRUE, message = "Simulation 3 ran successfully")
 )
 

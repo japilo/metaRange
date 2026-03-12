@@ -1,3 +1,6 @@
+# metaRange 1.3.1 (July Pilowsky's branch)
+* Added a new field to the `metaRangeParallel` class, `sample_id`, which allows the user to set custom IDs for each simulation.
+
 # metaRange 1.3.0 (July Pilowsky's branch)
 * Added a `metaRangeParallel` class to handle parallel simulations, as well as distribution of different parameters to each parallel simulation.
 * Added compatibility with the `poems` package for generating simulation model values.

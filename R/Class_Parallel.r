@@ -25,9 +25,23 @@ metaRangeParallel <- R6::R6Class(
     #' and each row is a different value for that trait. The number of rows
     #' determines the number of simulations.
     #' @param results_dir Results directory path where the simulation results
-    #' and simulation log will be stored.
+    #' directories and simulation log will be written.
+    #' @param sample_id By default, each simulation is written to a
+    #' subdirectory of the results directory called "simulation" followed by
+    #' the row index of the sample data frame (e.g., "simulation1",
+    #' "simulation2", etc.). If you want to use a different identifier for
+    #' each simulation, you can provide a character vector of sample IDs with
+    #'  the same length as the number of rows in the sample data frame. The
+    #' sample IDs will be used to name the subdirectories for each simulation
+    #'  (e.g., "simulationsampleID1", "simulationsampleID2", etc.).
     #' @param ... Parameters listed individually.
-    initialize = function(simulation_template, sample_data, results_dir, ...) {
+    initialize = function(
+      simulation_template,
+      sample_data,
+      results_dir,
+      sample_id,
+      ...
+    ) {
       args <- list(...)
       if (!missing(simulation_template)) {
         self$simulation_template <- simulation_template
@@ -37,6 +51,9 @@ metaRangeParallel <- R6::R6Class(
       }
       if (!missing(results_dir)) {
         self$results_dir <- results_dir
+      }
+      if (!missing(sample_id)) {
+        self$sample_id <- sample_id
       }
       for (arg in names(args)) {
         self[[arg]] <- args[[arg]]
@@ -52,7 +69,8 @@ metaRangeParallel <- R6::R6Class(
     #' @param sample_index Row index of sample data frame containing details of substitution parameters.
     #' @return Status message with substituted sample details.
     get_message_sample = function(status_message, sample_index) {
-      sample_vector <- c("sample", as.character(sample_index))
+      sample_id <- self$sample_id[sample_index]
+      sample_vector <- c("sample", sample_id)
 
       return(sprintf(status_message, paste(sample_vector, collapse = " ")))
     },
@@ -162,13 +180,14 @@ metaRangeParallel <- R6::R6Class(
     #' @param simulation \code{\link{metaRangeSimulation}} object (clone) to
     #' receive sample traits.
     #' @param sample_index Index of sample from data frame.
+    #' @param sample_id Sample ID to use in results directory naming.
     #' @keywords internal
     #' @export
-    set_model_sample = function(simulation, sample_index) {
+    set_model_sample = function(simulation, sample_index, sample_id) {
       simulation$add_globals(
         results_dir = file.path(
           self$results_dir,
-          paste0("simulation", sample_index)
+          paste0("simulation", sample_id)
         )
       )
 
@@ -335,7 +354,7 @@ metaRangeParallel <- R6::R6Class(
 
       # Check the completeness/consistency of the first sample only
       model <- self$simulation_template$new_clone()
-      self$set_model_sample(model, 1)
+      self$set_model_sample(model, 1, self$sample_id[1])
       model <- NULL
 
       if (self$register_parallel == TRUE) {
@@ -351,7 +370,7 @@ metaRangeParallel <- R6::R6Class(
         {
           # Clone the model
           model <- self$simulation_template$new_clone()
-          self$set_model_sample(model, i)
+          self$set_model_sample(model, i, self$sample_id[i])
 
           # Run the simulator
           run_status <- NULL
@@ -408,7 +427,10 @@ metaRangeParallel <- R6::R6Class(
 
           # Check results directories
           if (run_status$successful) {
-            results_dir <- file.path(self$results_dir, paste0("simulation", i))
+            results_dir <- file.path(
+              self$results_dir,
+              paste0("simulation", self$sample_id[i])
+            )
             if (length(list.files(results_dir)) > 0) {
               run_status$message <- paste0(
                 run_status$message,
@@ -442,6 +464,7 @@ metaRangeParallel <- R6::R6Class(
     .register_parallel = TRUE,
     .results_dir = tempdir(),
     .sample_data = NULL,
+    .sample_id = NULL,
     .seed = sample.int(1000000, 1),
     .simulation_template = NULL,
     .species_name = "species_1",
@@ -554,6 +577,38 @@ metaRangeParallel <- R6::R6Class(
       } else {
         checkmate::assert_directory_exists(value, access = "w")
         private$.results_dir <- value
+      }
+    },
+
+    # --------- // sample_id ----------------
+    #' @field sample_id A character vector of sample IDs for each simulation.
+    sample_id = function(value) {
+      if (missing(value)) {
+        if (!is.null(private$.sample_id)) {
+          private$.sample_id
+        } else if (!is.null(self$sample_data)) {
+          as.character(seq_len(nrow(self$sample_data)))
+        } else {
+          NULL
+        }
+      } else {
+        if (is.null(self$sample_data)) {
+          cli_abort("sample_data must be set before setting sample_id.")
+        }
+        checkmate::assert_character(value, len = nrow(self$sample_data))
+        # Check for empty strings
+        if (any(value == "")) {
+          cli_abort("sample_id cannot contain empty strings.")
+        }
+        # Check for duplicates
+        if (anyDuplicated(value)) {
+          cli_abort("sample_id must contain unique values.")
+        }
+        # Check for problematic path characters
+        if (any(grepl("[/\\]", value))) {
+          cli_abort("sample_id cannot contain path separators (/ or \\\\).")
+        }
+        private$.sample_id <- value
       }
     },
 

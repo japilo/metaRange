@@ -31,6 +31,8 @@ simulations.}
 
 \item{\code{results_dir}}{\verb{<character>} directory where results will be saved.}
 
+\item{\code{sample_id}}{A character vector of sample IDs for each simulation.}
+
 \item{\code{sample_data}}{A data frame of sampled parameters for each simulation.}
 
 \item{\code{seed}}{\verb{<integer>} seed for the random number generator.}
@@ -62,7 +64,13 @@ setting model attributes.}
 \subsection{Method \code{new()}}{
 Create a new \link{metaRangeParallel} object.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{metaRangeParallel$new(simulation_template, sample_data, results_dir, ...)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{metaRangeParallel$new(
+  simulation_template,
+  sample_data,
+  results_dir,
+  sample_id,
+  ...
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -76,7 +84,16 @@ and each row is a different value for that trait. The number of rows
 determines the number of simulations.}
 
 \item{\code{results_dir}}{Results directory path where the simulation results
-and simulation log will be stored.}
+directories and simulation log will be written.}
+
+\item{\code{sample_id}}{By default, each simulation is written to a
+subdirectory of the results directory called "simulation" followed by
+the row index of the sample data frame (e.g., "simulation1",
+"simulation2", etc.). If you want to use a different identifier for
+each simulation, you can provide a character vector of sample IDs with
+the same length as the number of rows in the sample data frame. The
+sample IDs will be used to name the subdirectories for each simulation
+(e.g., "simulationsampleID1", "simulationsampleID2", etc.).}
 
 \item{\code{...}}{Parameters listed individually.}
 }
@@ -139,7 +156,7 @@ on the specified sample index.
 It uses the sample data frame and the generators to determine the
 attribute values.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{metaRangeParallel$set_model_sample(simulation, sample_index)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{metaRangeParallel$set_model_sample(simulation, sample_index, sample_id)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -149,6 +166,8 @@ attribute values.
 receive sample traits.}
 
 \item{\code{sample_index}}{Index of sample from data frame.}
+
+\item{\code{sample_id}}{Sample ID to use in results directory naming.}
 }
 \if{html}{\out{</div>}}
 }
