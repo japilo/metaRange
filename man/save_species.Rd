@@ -31,10 +31,10 @@ If set to "skip", existing files will not be overwritten and the function
 will skip writing this output to disk.}
 
 \item{raster}{\verb{<boolean>} Should matrix traits be saved as rasters (\code{TRUE})
-or as matrices compressed to a \code{.qs} file (\code{FALSE})? \code{TRUE} by default.}
+or as matrices compressed to a \code{.qs2} file (\code{FALSE})? \code{TRUE} by default.}
 
 \item{...}{additional arguments passed to \link[terra:writeRaster]{terra::writeRaster} or
-\link[qs:qsave]{qs::qsave} (if \code{raster} is \code{FALSE}).}
+\link[qs2:qs_save]{qs2::qs_save} (if \code{raster} is \code{FALSE}).}
 }
 \value{
 \verb{<invisible character>} the paths to the saved files.
@@ -46,7 +46,7 @@ Saves the specified traits of a \link{metaRangeSpecies} object.
 The generated file names are of the form
 \code{file.path(path, paste0(prefix, species_name, "_", trait_name, ".file_extension"))}.
 If the trait is in a matrix or raster form, the file extension is \code{.tif} or
-\code{.qs}. Otherwise it is \code{.csv}.
+\code{.qs2}. Otherwise it is \code{.csv}.
 The prefix is optional and mainly useful to add a time step to the file
 name, in case the trait is saved multiple times during a simulation.
 }

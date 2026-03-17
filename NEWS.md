@@ -1,3 +1,6 @@
+# metaRange 1.3.2 (July Pilowsky's branch)
+* This fork of `metaRange` now depends on `qs2` instead of `qs` and writes to `.qs2` files instead of `.qs` (`qs` has been deprecated.)
+
 # metaRange 1.3.1 (July Pilowsky's branch)
 * Added a new field to the `metaRangeParallel` class, `sample_id`, which allows the user to set custom IDs for each simulation.
 
